@@ -1,5 +1,17 @@
+"use client";
+
+import { useState } from "react";
+import { useAccount } from "wagmi";
+import { WalletConnect } from "@/components/wallet-connect";
+import { SessionAccountManager } from "@/components/session-account";
+import { PermissionRequestManager } from "@/components/permission-request";
+import { PermissionRedeem } from "@/components/permission-redeem";
+import { createSessionAccount, PermissionRequest } from "@/lib/smart-accounts";
+import type { Hex, Address } from "viem";
+
 interface GrantedPermission {
   context: Hex;
   signerMeta: { delegationManager: Address };
   signerMeta: any;
   params: PermissionRequest;
+}
