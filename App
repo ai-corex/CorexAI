@@ -1,1 +1,5 @@
-
+interface GrantedPermission {
+  context: Hex;
+  signerMeta: { delegationManager: Address };
+  signerMeta: any;
+  params: PermissionRequest;
