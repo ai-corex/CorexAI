@@ -1,0 +1,4 @@
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+FLAUNCH_API_BASE=https://dev-api.flayerlabs.xyz
+CREATORBID_API=https://api.creator.bid
+BITQUERY_KEY=your_bitquery_api_key_here
