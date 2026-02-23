@@ -1,0 +1,13 @@
+useEffect(()=>{
+  const interval = setInterval(()=>{
+    fetch("/api/summary")
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.latest_launch?.symbol !== lastSeen){
+          alert("New Launch: "+d.latest_launch.symbol);
+          setLastSeen(d.latest_launch.symbol);
+        }
+      });
+  },60000);
+  return ()=>clearInterval(interval);
+},[]);
