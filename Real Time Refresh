@@ -1,0 +1,6 @@
+useEffect(()=>{
+  const refresh = setInterval(()=>{
+    window.location.reload();
+  },120000);
+  return ()=>clearInterval(refresh);
+},[]);
