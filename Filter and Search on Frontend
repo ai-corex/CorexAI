@@ -1,0 +1,26 @@
+import { useState } from "react";
+
+export default function Home({ data }) {
+  const [query, setQuery] = useState("");
+  const filterTokens = (tokens) =>
+    tokens.filter(t =>
+      t.name?.toLowerCase().includes(query.toLowerCase()) ||
+      t.symbol?.toLowerCase().includes(query.toLowerCase())
+    );
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search token..."
+        onChange={e => setQuery(e.target.value)}
+        style={{ padding: "8px", marginBottom: "16px" }}
+      />
+
+      <TokenList title="Flaunch" tokens={filterTokens(data.flaunch.tokens)} />
+      <TokenList title="CreatorBid" tokens={filterTokens(data.creatorbid.tokens)} />
+      <TokenList title="Bankr" tokens={filterTokens(data.bankr.tokens)} />
+      <TokenList title="Clanker" tokens={filterTokens(data.clanker.tokens)} />
+    </div>
+  );
+}
