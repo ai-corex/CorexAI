@@ -1,0 +1,33 @@
+// pages/index.js
+import TokenList from '../components/TokenList';
+
+export default function Home({ data }) {
+  return (
+    <div style={{maxWidth:900, margin:'40px auto', fontFamily:'system-ui,Arial'}}>
+      <h1>Corex AI — Launchpad Token Dashboard</h1>
+      <p>Aggregated tokens from Clanker, CreatorBid, Bankr, Flaunch</p>
+
+      <TokenList title="Flaunch" tokens={data.flaunch.tokens || []} />
+      <TokenList title="CreatorBid" tokens={data.creatorbid.tokens || []} />
+      <TokenList title="Bankr" tokens={data.bankr.tokens || []} />
+      <TokenList title="Clanker" tokens={data.clanker.tokens || []} />
+    </div>
+  );
+}
+
+export async function getServerSideProps(ctx) {
+  const base = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const fetcher = async (path) => {
+    try {
+      const r = await fetch(`${base}/api/${path}`);
+      return await r.json();
+    } catch { return { tokens: [] }; }
+  };
+  const [flaunch, creatorbid, bankr, clanker] = await Promise.all([
+    fetcher('flaunch'),
+    fetcher('creatorbid'),
+    fetcher('bankr'),
+    fetcher('clanker')
+  ]);
+  return { props: { data: { flaunch, creatorbid, bankr, clanker } } };
+}
