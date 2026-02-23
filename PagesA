@@ -1,0 +1,52 @@
+// pages/api/clanker.js
+import fetch from 'node-fetch';
+
+export default async function handler(req, res) {
+  try {
+    const BITQUERY_KEY = process.env.BITQUERY_KEY; // optional
+    if (!BITQUERY_KEY) {
+      // fallback: return pointer to docs if no key
+      return res.status(200).json({ info: 'No BITQUERY_KEY set. See Clanker docs: https://clanker.gitbook.io' });
+    }
+
+    const query = `
+    {
+      ethereum(network: base) {
+        transfers(
+          receiver: {is: "0x...clankerFactoryAddress"} # replace with Clanker factory address
+          options: {desc: "block.timestamp.time", limit: 50}
+        ) {
+          currency {
+            address
+            symbol
+            name
+          }
+          block {
+            timestamp {
+              time
+            }
+          }
+        }
+      }
+    }`;
+    const r = await fetch('https://graphql.bitquery.io', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': BITQUERY_KEY
+      },
+      body: JSON.stringify({ query })
+    });
+    const json = await r.json();
+    // normalize
+    const tokens = (json.data?.ethereum?.transfers || []).map(t => ({
+      name: t.currency.name,
+      symbol: t.currency.symbol,
+      address: t.currency.address,
+      launch_time: t.block.timestamp.time
+    }));
+    res.status(200).json({ tokens });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
