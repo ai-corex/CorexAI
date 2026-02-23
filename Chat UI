@@ -1,0 +1,41 @@
+import { useState } from "react";
+
+function Chat() {
+  const [input, setInput] = useState("");
+  const [history, setHistory] = useState([]);
+
+  const send = async () => {
+    if (!input) return;
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ question: input }),
+      headers: { "Content-Type": "application/json" }
+    });
+    const { answer } = await res.json();
+    setHistory([...history, { q: input, a: answer }]);
+    setInput("");
+  };
+
+  return (
+    <div style={{marginTop:32}}>
+      <h2>Chat with Corex AI</h2>
+      <div>
+        {history.map((h, i) => (
+          <div key={i}>
+            <b>Q:</b> {h.q} <br />
+            <b>A:</b> {h.a}
+          </div>
+        ))}
+      </div>
+
+      <input
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        placeholder="Ask about a token..."
+      />
+      <button onClick={send}>Send</button>
+    </div>
+  );
+}
+
+export default Chat;
