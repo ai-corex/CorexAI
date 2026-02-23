@@ -1,0 +1,23 @@
+// pages/api/creatorbid.js
+import fetch from 'node-fetch';
+
+export default async function handler(req, res) {
+  try {
+    const CREATORBID_API = process.env.CREATORBID_API || 'https://api.creator.bid'; /agents (public)
+    const resp = await fetch(`${CREATORBID_API}/apis/public/agents`);
+    if (!resp.ok) return res.status(502).json({ error: 'CreatorBid API error' });
+    const json = await resp.json();
+    // transform:
+    const tokens = (json.agents || []).flatMap(agent => {
+      return (agent.tokens || []).map(t => ({
+        name: t.name,
+        symbol: t.symbol,
+        address: t.address,
+        agent: agent.name
+      }));
+    });
+    res.status(200).json({ tokens });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
