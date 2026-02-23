@@ -1,0 +1,18 @@
+// pages/api/watchlist.js
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
+
+export default async function handler(req, res) {
+  if (req.method === "POST") {
+    const { user_id, token } = req.body;
+    const { data, error } = await supabase
+      .from("watchlist")
+      .insert([{ user_id, ...token }]);
+    if (error) return res.status(500).json({ error });
+    return res.status(200).json(data);
+  }
+}
