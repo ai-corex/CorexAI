@@ -1,0 +1,23 @@
+import axios from "axios";
+
+export async function GET() {
+  const sources = [
+    process.env.FLAUNCH_API_BASE + "/tokens",
+    process.env.CREATORBID_API + "/v1/agents",
+    process.env.BANKR_API + "/launches"
+  ];
+
+  const results = await Promise.allSettled(
+    sources.map(url => axios.get(url))
+  );
+
+  const tokens = [];
+
+  results.forEach(r => {
+    if (r.status === "fulfilled") {
+      tokens.push(...(r.value.data.tokens || []));
+    }
+  });
+
+  return Response.json({ tokens });
+}
