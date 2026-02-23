@@ -1,0 +1,32 @@
+// pages/api/clanker.js
+import fetch from 'node-fetch';
+
+export default async function handler(_, res) {
+  try {
+    const BASE = process.env.CLANKER_GRAPH_ENDPOINT;
+    const query = `
+    {
+      tokens(orderBy: launchTime, orderDirection: desc) {
+        id
+        name
+        symbol
+        launchTime
+      }
+    }`;
+    const resp = await fetch(BASE, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query })
+    });
+    const { data } = await resp.json();
+    const tokens = data.tokens.map(t => ({
+      name: t.name,
+      symbol: t.symbol,
+      address: t.id,
+      launch_date: t.launchTime
+    }));
+    res.status(200).json({ tokens });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
