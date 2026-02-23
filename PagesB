@@ -1,0 +1,29 @@
+// pages/api/bankr.js
+import fetch from 'node-fetch';
+
+export default async function handler(req, res) {
+  try {
+    const resp = await fetch('https://bankr.bot/launches');
+    if (!resp.ok) return res.status(502).json({ error: 'Bankr endpoint error' });
+    const text = await resp.text();
+    try {
+      const json = JSON.parse(text);
+      const tokens = (json.launches || []).map(l => ({
+        name: l.name,
+        symbol: l.symbol,
+        address: l.address,
+        status: l.status
+      }));
+      return res.status(200).json({ tokens });
+    } catch (e) {
+      // fallback: jika HTML,(fragile)
+      const matches = [...text.matchAll(/"token"\s*:\s*({[^}]+})/g)];
+      const tokens = matches.map(m => {
+        try { return JSON.parse(m[1]); } catch { return null; }
+      }).filter(Boolean);
+      return res.status(200).json({ tokens });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
