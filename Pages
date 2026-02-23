@@ -1,0 +1,23 @@
+// pages/api/flaunch.js
+import fetch from 'node-fetch';
+
+export default async function handler(req, res) {
+  try {
+    const FLAUNCH_API_BASE = process.env.FLAUNCH_API_BASE || 'https://dev-api.flayerlabs.xyz';
+    // endpoint aggregator / tokens list per docs for-aggregators
+    const resp = await fetch(`${FLAUNCH_API_BASE}/tokens`);
+    if (!resp.ok) return res.status(502).json({ error: 'Flaunch API error' });
+    const data = await resp.json();
+    // normalize minimal fields
+    const tokens = (data.tokens || data).map(t => ({
+      name: t.name,
+      symbol: t.symbol,
+      address: t.address,
+      launch_date: t.launch_date || t.created_at,
+      market_data: t.market_data || {}
+    }));
+    res.status(200).json({ tokens });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
