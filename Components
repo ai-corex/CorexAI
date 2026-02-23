@@ -1,0 +1,16 @@
+// components/TokenList.js
+export default function TokenList({ title, tokens }) {
+  return (
+    <section style={{marginBottom:24}}>
+      <h2>{title} ({tokens?.length || 0})</h2>
+      <ul>
+        {tokens?.map((t, i) => (
+          <li key={t.address || i} style={{padding:'8px 0', borderBottom:'1px solid #eee'}}>
+            <strong>{t.symbol || t.name}</strong> — {t.name || '—'}
+            <div style={{fontSize:12, color:'#666'}}>addr: {t.address || '—'} · {t.launch_date || t.launch_time || t.status || ''}</div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
