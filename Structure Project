@@ -1,0 +1,13 @@
+corex-ai/
+├─ package.json
+├─ next.config.js
+├─ pages/
+│  ├─ index.js
+│  └─ api/
+│     ├─ flaunch.js
+│     ├─ creatorbid.js
+│     ├─ bankr.js
+│     └─ clanker.js
+├─ components/
+│  └─ TokenList.js
+└─ README.md
